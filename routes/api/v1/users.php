@@ -1,7 +1,5 @@
 <?php
 
-//Route::apiResource('users', \App\Http\Controllers\UserController::class);
-
 use Illuminate\Support\Facades\Route;
 
 //Route::group([
@@ -26,7 +24,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware([
 //    'auth:api',
-//    \App\Http\Middleware\RedirectIfAuthenticated::class,
 ])
     ->name('users.')
     ->namespace("\App\Http\Controllers")
@@ -37,9 +34,7 @@ Route::middleware([
 
         Route::get('/users/{user}', [\App\Http\Controllers\UserController::class, 'show'])
             ->name('show')
-//            ->where('user', '[0-9]+')
-            ->whereNumber('user')
-        ;
+            ->whereNumber('user');
 
         Route::post('/users', [\App\Http\Controllers\UserController::class, 'store'])->name('store');
 
