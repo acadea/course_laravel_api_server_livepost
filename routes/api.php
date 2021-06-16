@@ -13,17 +13,11 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-//Route::apiResource('users', \App\Http\Controllers\UserController::class);
 
-Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
-
-Route::get('/users/{user}', [\App\Http\Controllers\UserController::class, 'show']);
-
-Route::post('/users', [\App\Http\Controllers\UserController::class, 'store']);
-
-Route::patch('/users/{user}', [\App\Http\Controllers\UserController::class, 'update']);
-
-Route::delete('/users/{user}', [\App\Http\Controllers\UserController::class, 'destroy']);
+Route::prefix('v1')
+    ->group(function (){
+        require __DIR__ . '/api/v1/users.php';
+    });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
