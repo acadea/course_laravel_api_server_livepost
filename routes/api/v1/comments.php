@@ -6,7 +6,7 @@ Route::middleware([
 //    'auth:api',
 ])
     ->name('comments.')
-    ->namespace("\App\Http\Controllers")
+//    ->namespace("\App\Http\Controllers")
     ->group(function () {
         Route::get('/comments', [\App\Http\Controllers\CommentController::class, 'index'])
             ->name('index');
@@ -15,7 +15,7 @@ Route::middleware([
             ->name('show')
             ->whereNumber('comment');
 
-        Route::comment('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->name('store');
+        Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->name('store');
 
         Route::patch('/comments/{comment}', [\App\Http\Controllers\CommentController::class, 'update'])->name('update');
 
