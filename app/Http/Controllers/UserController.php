@@ -2,31 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return ResourceCollection
      */
     public function index()
     {
         $users = User::query()->get();
         
-        return new \Illuminate\Http\JsonResponse([
-            'data' => $users,
-        ]);
+        return UserResource::collection($users);
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return UserResource
      */
     public function store(Request $request)
     {
@@ -36,22 +36,18 @@ class UserController extends Controller
             'password' => $request->password,
         ]);
         
-        return new \Illuminate\Http\JsonResponse([
-            'data' => $created
-        ]);
+        return new UserResource($created);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\JsonResponse
+     * @return UserResource
      */
     public function show(User $user)
     {
-        return new \Illuminate\Http\JsonResponse([
-            'data' => $user
-        ]);
+        return new UserResource($user);
     }
 
     /**
@@ -59,7 +55,7 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\JsonResponse
+     * @return UserResource | JsonResponse
      */
     public function update(Request $request, User $user)
     {
@@ -75,9 +71,7 @@ class UserController extends Controller
             ]);
         }
         
-        return new \Illuminate\Http\JsonResponse([
-            'data' => $user,
-        ]);
+        return new UserResource($user);
     }
 
     /**

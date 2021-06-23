@@ -18,9 +18,10 @@ Route::prefix('v1')
     ->group(function (){
         \App\Helpers\Routes\RouteHelper::includeRouteFiles(__DIR__ . '/api/v1');
 
-//        require __DIR__ . '/api/v1/users.php';
-//        require __DIR__ . '/api/v1/posts.php';
-//        require __DIR__ . '/api/v1/comments.php';
+//        require __DIR__ . '/api/users.php';
+//        require __DIR__ . '/api/posts.php';
+//        require __DIR__ . '/api/comments.php';
+
     });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
