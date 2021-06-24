@@ -15,9 +15,9 @@ class CommentController extends Controller
      *
      * @return ResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        $comments = Comment::query()->get();
+        $comments = Comment::query()->paginate($request->page_size ?? 20);
 
         return CommentResource::collection($comments);
     }
