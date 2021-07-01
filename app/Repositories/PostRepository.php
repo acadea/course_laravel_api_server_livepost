@@ -22,9 +22,6 @@ class PostRepository extends BaseRepository
                 'title' => data_get($attributes, 'title', 'Untitled'),
                 'body' => data_get($attributes, 'body'),
             ]);
-//            if(!$created){
-//                throw new GeneralJsonException('Failed to create post.');
-//            }
             throw_if(!$created, GeneralJsonException::class, 'Failed to create. ');
             event(new PostCreated($created));
             if($userIds = data_get($attributes, 'user_ids')){
