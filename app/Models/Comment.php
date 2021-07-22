@@ -10,8 +10,9 @@ class Comment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
         'body',
+        'user_id',
+        'post_id',
     ];
 
     protected $casts = [
