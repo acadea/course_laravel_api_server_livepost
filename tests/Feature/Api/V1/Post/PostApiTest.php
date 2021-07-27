@@ -3,7 +3,10 @@
 namespace Tests\Feature\Api\V1\Post;
 
 use App\Events\Models\Post\PostCreated;
+use App\Events\Models\Post\PostDeleted;
+use App\Events\Models\Post\PostUpdated;
 use App\Models\Post;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
@@ -13,6 +16,8 @@ class PostApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $uri = '/api/v1/posts';
+
     public function test_index()
     {
         // load data in db
@@ -20,7 +25,7 @@ class PostApiTest extends TestCase
         $postIds = $posts->map(fn ($post) => $post->id);
 
         // call index endpoint
-        $response = $this->json('get', '/api/v1/posts');
+        $response = $this->json('get', $this->uri);
 
         // assert status
         $response->assertStatus(200);
@@ -32,7 +37,7 @@ class PostApiTest extends TestCase
     public function test_show()
     {
         $dummy = Post::factory()->create();
-        $response = $this->json('get', '/api/v1/posts/' . $dummy->id);
+        $response = $this->json('get', $this->uri . '/' . $dummy->id);
 
         $result = $response->assertStatus(200)->json('data');
 
@@ -45,7 +50,7 @@ class PostApiTest extends TestCase
         Event::fake();
         $dummy = Post::factory()->make();
 
-        $response = $this->json('post', '/api/v1/posts', $dummy->toArray());
+        $response = $this->json('post', $this->uri, $dummy->toArray());
 
         $result = $response->assertStatus(201)->json('data');
         Event::assertDispatched(PostCreated::class);
@@ -58,7 +63,34 @@ class PostApiTest extends TestCase
 
     public function test_update()
     {
-        
+        $dummy = Post::factory()->create();
+        $dummy2 = Post::factory()->make();
+        Event::fake();
+        $fillables = collect((new Post())->getFillable());
+
+        $fillables->each(function ($toUpdate) use($dummy, $dummy2){
+            $response = $this->json('patch', $this->uri . '/' . $dummy->id, [
+                $toUpdate => data_get($dummy2, $toUpdate),
+            ]);
+
+            $result = $response->assertStatus(200)->json('data');
+            Event::assertDispatched(PostUpdated::class);
+            $this->assertSame(data_get($dummy2, $toUpdate), data_get($dummy->refresh(), $toUpdate),'Failed to update model.');
+        });
+    }
+
+    public function test_delete()
+    {
+        Event::fake();
+        $dummy = Post::factory()->create();
+
+        $response = $this->json('delete', $this->uri . '/'.$dummy->id);
+
+        $result = $response->assertStatus(200);
+        Event::assertDispatched(PostDeleted::class);
+        $this->expectException(ModelNotFoundException::class);
+        Post::query()->findOrFail($dummy->id);
+
     }
 
 }
