@@ -14,5 +14,8 @@ class ExampleTest extends TestCase
     public function test_example()
     {
         $this->assertTrue(true);
+        $this->assertSame('abc', 'abc');
+        $this->assertSame('heyaa', 'heyaa');
+        $this->assertSame('hoho', 'hoho');
     }
 }

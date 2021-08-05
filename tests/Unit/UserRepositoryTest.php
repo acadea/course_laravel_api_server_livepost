@@ -7,10 +7,13 @@ namespace Tests\Unit;
 use App\Exceptions\GeneralJsonException;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class UserRepositoryTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_create()
     {
         // 1. Define the goal
