@@ -15,3 +15,5 @@ yarn-error.log
 public/mix-manifest.json
 _ide_helper.php
 .phpstorm.meta.php
+public/docs
+.scribe
