@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Routing\Middleware\ThrottleRequestsWithRedis;
 
 class Kernel extends HttpKernel
 {
@@ -40,7 +41,8 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            'throttle:api',
+//            'throttle:api',
+            'throttle:2,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
@@ -61,6 +63,7 @@ class Kernel extends HttpKernel
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+//        'throttle' => ThrottleRequestsWithRedis::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 }
