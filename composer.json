@@ -11,6 +11,7 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/fortify": "^1.8",
         "laravel/framework": "^8.40",
+        "laravel/sanctum": "^2.12",
         "laravel/tinker": "^2.5"
     },
     "require-dev": {

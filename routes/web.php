@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/app', function (){
+    return view('app');
+});
+
 Route::get('/reset-password/{token}', function ($token){
     return view('auth.password-reset', [
         'token' => $token
