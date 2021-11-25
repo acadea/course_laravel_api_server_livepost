@@ -23,7 +23,7 @@ class PostFactory extends Factory
     {
         return [
             'title' => $this->faker->word,
-            'body' => [],
+            'body' => ['abc'],
         ];
     }
 

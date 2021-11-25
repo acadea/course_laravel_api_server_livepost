@@ -6,6 +6,7 @@ use App\Events\Models\Comment\CommentCreated;
 use App\Events\Models\Comment\CommentDeleted;
 use App\Events\Models\Comment\CommentUpdated;
 use App\Models\Comment;
+use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -18,11 +19,18 @@ class CommentApiTest extends TestCase
 
     protected $uri = '/api/v1/comments';
 
+    public function setUp(): void
+    {
+        parent::setUp();
+        $user = User::factory()->make();
+        $this->actingAs($user);
+    }
+
     public function test_index()
     {
         // load data in db
         $comments = Comment::factory(10)->create();
-        $commentIds = $comments->map(fn ($comment) => $comment->id);
+        $commentIds = $comments->map(fn($comment) => $comment->id);
 
         // call index endpoint
         $response = $this->json('get', $this->uri);
@@ -31,7 +39,7 @@ class CommentApiTest extends TestCase
         $response->assertStatus(200);
         // verify records
         $data = $response->json('data');
-        collect($data)->each(fn ($comment) => $this->assertTrue(in_array($comment['id'], $commentIds->toArray())));
+        collect($data)->each(fn($comment) => $this->assertTrue(in_array($comment['id'], $commentIds->toArray())));
     }
 
     public function test_show()
@@ -56,7 +64,7 @@ class CommentApiTest extends TestCase
         Event::assertDispatched(CommentCreated::class);
         $result = collect($result)->only(array_keys($dummy->getAttributes()));
 
-        $result->each(function ($value, $field) use($dummy){
+        $result->each(function ($value, $field) use ($dummy) {
             $this->assertSame(data_get($dummy, $field), $value, 'Fillable is not the same.');
         });
     }
@@ -68,14 +76,14 @@ class CommentApiTest extends TestCase
         Event::fake();
         $fillables = collect((new Comment())->getFillable());
 
-        $fillables->each(function ($toUpdate) use($dummy, $dummy2){
+        $fillables->each(function ($toUpdate) use ($dummy, $dummy2) {
             $response = $this->json('patch', $this->uri . '/' . $dummy->id, [
                 $toUpdate => data_get($dummy2, $toUpdate),
             ]);
 
             $result = $response->assertStatus(200)->json('data');
             Event::assertDispatched(CommentUpdated::class);
-            $this->assertEquals(data_get($dummy2, $toUpdate), data_get($dummy->refresh(), $toUpdate),'Failed to update model.');
+            $this->assertEquals(data_get($dummy2, $toUpdate), data_get($dummy->refresh(), $toUpdate), 'Failed to update model.');
         });
     }
 
@@ -84,7 +92,7 @@ class CommentApiTest extends TestCase
         Event::fake();
         $dummy = Comment::factory()->create();
 
-        $response = $this->json('delete', $this->uri . '/'.$dummy->id);
+        $response = $this->json('delete', $this->uri . '/' . $dummy->id);
 
         $result = $response->assertStatus(200);
         Event::assertDispatched(CommentDeleted::class);

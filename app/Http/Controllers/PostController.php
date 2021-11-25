@@ -60,7 +60,7 @@ class PostController extends Controller
         ]);
         Validator::validate($payload, [
             'title' => 'string|required',
-            'body' => ['string', 'required'],
+            'body' => ['array', 'required'],
             'user_ids' => [
                 'array',
                 'required',
