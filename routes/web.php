@@ -30,7 +30,23 @@ Route::get('/reset-password/{token}', function ($token){
 
 if(\Illuminate\Support\Facades\App::environment('local')){
 
+
     Route::get('/playground', function (){
+    //    App::setLocale('es');
+        $trans = \Illuminate\Support\Facades\Lang::get('auth.failed');
+        $trans = __('auth.password');
+        $trans = __('auth.throttle', ['seconds' => 5]);
+        // current locale
+        dump(\Illuminate\Support\Facades\App::currentLocale());
+        dump(App::isLocale('en'));
+
+        $trans = __('this is sparta');
+        $trans = trans_choice('auth.pants', -4);
+        $trans = trans_choice('auth.apples', 2, ['baskets' => 2]);
+        $trans = __('auth.welcome', ['name' => 'sam']);
+
+
+        dd($trans);
         $user = \App\Models\User::factory()->make();
         \Illuminate\Support\Facades\Mail::to($user)
             ->send(new \App\Mail\WelcomeMail($user));
