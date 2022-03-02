@@ -28,28 +28,30 @@ Route::get('/reset-password/{token}', function ($token){
 })->middleware(['guest:'.config('fortify.guard')])
   ->name('password.reset');
 
+Route::get('/shared/posts/{post}', function (\Illuminate\Http\Request $request, \App\Models\Post $post){
+
+    return "Specially made just for you 💕 ;) Post id: {$post->id}";
+
+})->name('shared.post')->middleware('signed');
+
+
 if(\Illuminate\Support\Facades\App::environment('local')){
 
+//    Route::get('/shared/videos/{video}', function (\Illuminate\Http\Request $request, $video){
+//
+////        if(!$request->hasValidSignature()){
+////            abort(401);
+////        }
+//
+//        return 'git gud';
+//    })->name('share-video')->middleware('signed');
 
     Route::get('/playground', function (){
-    //    App::setLocale('es');
-        $trans = \Illuminate\Support\Facades\Lang::get('auth.failed');
-        $trans = __('auth.password');
-        $trans = __('auth.throttle', ['seconds' => 5]);
-        // current locale
-        dump(\Illuminate\Support\Facades\App::currentLocale());
-        dump(App::isLocale('en'));
-
-        $trans = __('this is sparta');
-        $trans = trans_choice('auth.pants', -4);
-        $trans = trans_choice('auth.apples', 2, ['baskets' => 2]);
-        $trans = __('auth.welcome', ['name' => 'sam']);
-
-
-        dd($trans);
-        $user = \App\Models\User::factory()->make();
-        \Illuminate\Support\Facades\Mail::to($user)
-            ->send(new \App\Mail\WelcomeMail($user));
-       return null;
+    //
+        $url = URL::temporarySignedRoute('share-video', now()->addSeconds(30), [
+            'video' => 123
+        ]);
+        return $url;
+//       return null;
     });
 }
