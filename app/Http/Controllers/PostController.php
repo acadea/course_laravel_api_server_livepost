@@ -6,12 +6,15 @@ use App\Exceptions\GeneralJsonException;
 use App\Http\Requests\PostStoreRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Models\User;
+use App\Notifications\PostSharedNotification;
 use App\Repositories\PostRepository;
 use App\Rules\IntegerArray;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
@@ -143,6 +146,13 @@ class PostController extends Controller
         $url = URL::temporarySignedRoute('shared.post', now()->addDays(30), [
             'post' => $post->id,
         ]);
+
+        $users = User::query()->whereIn('id', $request->user_ids)->get();
+
+        Notification::send($users, new PostSharedNotification($post, $url));
+
+        $user = User::query()->find(1);
+        $user->notify(new PostSharedNotification($post, $url));
 
         return new JsonResponse([
             'data' => $url,
