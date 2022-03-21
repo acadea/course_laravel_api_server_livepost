@@ -1,5 +1,9 @@
 <?php
 
+use App\Events\ChatMessageEvent;
+use App\Models\Post;
+use App\Websockets\SocketHandler\UpdatePostSocketHandler;
+use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,11 +32,16 @@ Route::get('/reset-password/{token}', function ($token){
 })->middleware(['guest:'.config('fortify.guard')])
   ->name('password.reset');
 
-Route::get('/shared/posts/{post}', function (\Illuminate\Http\Request $request, \App\Models\Post $post){
+Route::get('/shared/posts/{post}', function (\Illuminate\Http\Request $request, Post $post){
 
     return "Specially made just for you 💕 ;) Post id: {$post->id}";
 
 })->name('shared.post')->middleware('signed');
+
+
+
+WebSocketsRouter::webSocket('/socket/update-post', UpdatePostSocketHandler::class);
+
 
 
 if(\Illuminate\Support\Facades\App::environment('local')){
@@ -48,7 +57,7 @@ if(\Illuminate\Support\Facades\App::environment('local')){
 
     Route::get('/playground', function (){
 
-        event(new \App\Events\ChatMessageEvent());
+        event(new ChatMessageEvent());
 //        $url = URL::temporarySignedRoute('share-video', now()->addSeconds(30), [
 //            'video' => 123
 //        ]);
@@ -61,7 +70,7 @@ if(\Illuminate\Support\Facades\App::environment('local')){
     });
 
     Route::post('/chat-message', function (\Illuminate\Http\Request $request){
-        event(new \App\Events\ChatMessageEvent($request->message, auth()->user()));
+        event(new ChatMessageEvent($request->message, auth()->user()));
         return null;
     });
 }
